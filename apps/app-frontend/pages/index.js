@@ -19,11 +19,11 @@ export default function Dashboard() {
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: BarChart3, current: true },
-    { name: 'Portfolio', href: '/portfolio', icon: TrendingUp, current: false },
+    { name: 'AI Trading', href: '/ai-trading', icon: TrendingUp, current: false },
     { name: 'Backtesting', href: '/backtest', icon: Target, current: false },
     { name: 'Courses', href: '/courses', icon: BookOpen, current: false },
-    { name: 'Community', href: '/community', icon: Users, current: false },
-    { name: 'Settings', href: '/settings', icon: Settings, current: false },
+    { name: 'Paper Trading', href: '/paper-trading', icon: Users, current: false },
+    { name: 'Trading Journal', href: '/journal', icon: Settings, current: false },
   ]
 
   return (

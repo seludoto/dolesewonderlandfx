@@ -19,7 +19,8 @@ const Navbar = () => {
     { name: 'Features', href: '#features' },
     { name: 'Testimonials', href: '#testimonials' },
     { name: 'Pricing', href: '#pricing' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Trading App', href: 'https://app.dolesewonderlandfx.me', external: true },
+    { name: 'Admin Panel', href: 'https://admin.dolesewonderlandfx.me', external: true },
   ]
 
   return (
@@ -46,6 +47,8 @@ const Navbar = () => {
               <a
                 key={item.name}
                 href={item.href}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
                 className={`text-sm font-medium transition-colors hover:text-primary-500 ${
                   isScrolled ? 'text-gray-700' : 'text-white'
                 }`}
@@ -58,9 +61,14 @@ const Navbar = () => {
           {/* Right side - Language switcher and CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
-            <button className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+            <a
+              href="https://app.dolesewonderlandfx.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+            >
               Get Started
-            </button>
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -87,6 +95,8 @@ const Navbar = () => {
                 <a
                   key={item.name}
                   href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
                   className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-500 hover:bg-gray-50 rounded-md transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
@@ -94,9 +104,14 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="pt-4 pb-2">
-                <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                <a
+                  href="https://app.dolesewonderlandfx.me"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-center block"
+                >
                   Get Started
-                </button>
+                </a>
               </div>
             </div>
           </div>
