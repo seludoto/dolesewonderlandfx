@@ -14,7 +14,7 @@ export default function AdminLogin() {
     setLoading(true)
 
     try {
-      const response = await axios.post(`${process.env.API_URL}/login`, credentials)
+      const response = await axios.post('https://auth.dolesewonderlandfx.me/login', credentials)
       localStorage.setItem('adminToken', response.data.token)
       localStorage.setItem('adminUser', JSON.stringify(response.data.user))
       toast.success('Login successful!')
