@@ -7,8 +7,8 @@ const nextConfig = {
     unoptimized: true
   },
   env: {
-    API_URL: process.env.API_URL || 'http://api.dolesewonderlandfx.me:31373',
-    AUTH_API_URL: process.env.AUTH_API_URL || 'http://auth.dolesewonderlandfx.me:31282'
+    API_URL: process.env.API_URL || 'https://api.dolesewonderlandfx.me',
+    AUTH_API_URL: process.env.AUTH_API_URL || 'https://auth.dolesewonderlandfx.me'
   }
 }
 
