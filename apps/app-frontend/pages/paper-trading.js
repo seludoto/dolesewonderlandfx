@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -167,15 +168,15 @@ export default function PaperTrading() {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <p className="text-gray-500 text-center py-8">
-                AI Trading Analysis is available on the dedicated <a href="/ai-trading" className="text-blue-600 hover:underline">AI Trading page</a>.
+                AI Trading Analysis is available on the dedicated <Link href="/ai-trading" className="text-blue-600 hover:underline">AI Trading page</Link>.
               </p>
               <div className="text-center mt-4">
-                <a
+                <Link
                   href="/ai-trading"
                   className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded font-semibold inline-block"
                 >
                   Go to AI Trading Analysis
-                </a>
+                </Link>
               </div>
             </div>
           </div>
