@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dolesewonderlandfx-auth
+  labels:
+    app: dolesewonderlandfx-auth
+    component: backend
+spec:
+  selector:
+    app: dolesewonderlandfx-auth
+  ports:
+  - name: http
+    port: 8002
+    targetPort: 8002
+    protocol: TCP
+  type: NodePort

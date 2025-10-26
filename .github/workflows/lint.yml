@@ -1,0 +1,41 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Markdown lint
+      uses: docker://avtodev/markdown-lint:v1
+      with:
+        args: "*.md docs/**/*.md markdowns_docs/**/*.md"
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run YAML lint
+      run: |
+        sudo apt-get install yamllint
+        yamllint .github/workflows/*.yml .github/**/*.yml
+
+  docker-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Docker lint
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: services/*/Dockerfile

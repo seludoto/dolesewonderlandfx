@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # API Gateway / Main Backend
+  api:
+    build: ./services/api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
+    volumes:
+      - ./services/api:/app
+    depends_on:
+      - auth
+      - email
+    networks:
+      - dolesefx-network
+
+  # Authentication Service
+  auth:
+    build: ./services/auth
+    ports:
+      - "8002:8002"
+    environment:
+      - ENV=development
+    volumes:
+      - ./services/auth:/app
+    networks:
+      - dolesefx-network
+
+  # AI Pipeline Service
+  ai-pipeline:
+    build: ./services/ai-pipeline
+    ports:
+      - "8003:8003"
+    environment:
+      - ENV=development
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./services/ai-pipeline:/app
+    networks:
+      - dolesefx-network
+
+  # Insight Generator Service
+  insight-generator:
+    build: ./services/insight-generator
+    ports:
+      - "8004:8004"
+    environment:
+      - ENV=development
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./services/insight-generator:/app
+    depends_on:
+      - ai-pipeline
+    networks:
+      - dolesefx-network
+
+  # Backtester Service
+  backtester:
+    build: ./services/backtester
+    ports:
+      - "8001:8001"
+    environment:
+      - ENV=development
+    volumes:
+      - ./services/backtester:/app
+    networks:
+      - dolesefx-network
+
+  # Paper Trading Service
+  paper-trading:
+    build: ./services/paper-trading
+    ports:
+      - "8005:8005"
+    environment:
+      - ENV=development
+    volumes:
+      - ./services/paper-trading:/app
+    networks:
+      - dolesefx-network
+
+  # Email Service
+  email:
+    build: ./services/email
+    ports:
+      - "8006:8006"
+    environment:
+      - ENV=development
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - FROM_EMAIL=${FROM_EMAIL:-noreply@dolesewonderlandfx.com}
+    volumes:
+      - ./services/email:/app
+    networks:
+      - dolesefx-network
+
+  # Social Trading Service
+  social-trading:
+    build: ./services/social-trading
+    ports:
+      - "8007:8007"
+    environment:
+      - ENV=development
+    volumes:
+      - ./services/social-trading:/app
+    depends_on:
+      - paper-trading
+      - ai-pipeline
+    networks:
+      - dolesefx-network
+
+  # Monitoring Stack
+  prometheus:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile.prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - dolesefx-network
+
+  grafana:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile.grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - dolesefx-network
+
+  # Shared Database (SQLite for development)
+  db:
+    image: nouchka/sqlite3:latest
+    volumes:
+      - ./data/app.db:/data/app.db
+    networks:
+      - dolesefx-network
+
+networks:
+  dolesefx-network:
+    driver: bridge
+
+volumes:
+  grafana-storage:

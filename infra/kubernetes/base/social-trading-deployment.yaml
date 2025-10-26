@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dolesewonderlandfx-social-trading
+  labels:
+    app: dolesewonderlandfx-social-trading
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dolesewonderlandfx-social-trading
+  template:
+    metadata:
+      labels:
+        app: dolesewonderlandfx-social-trading
+        component: backend
+    spec:
+      containers:
+      - name: social-trading
+        image: registry.digitalocean.com/dolesewonderlandfx-dev/social-trading:latest
+        ports:
+        - containerPort: 8007
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: database_url
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8007
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8007
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      imagePullSecrets:
+      - name: ecr-secret

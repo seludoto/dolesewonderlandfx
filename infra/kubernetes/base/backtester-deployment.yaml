@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dolesewonderlandfx-backtester
+  labels:
+    app: dolesewonderlandfx-backtester
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dolesewonderlandfx-backtester
+  template:
+    metadata:
+      labels:
+        app: dolesewonderlandfx-backtester
+        component: backend
+    spec:
+      containers:
+      - name: backtester
+        image: registry.digitalocean.com/dolesewonderlandfx-dev/backtester:latest
+        ports:
+        - containerPort: 8001
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: database_url
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      imagePullSecrets:
+      - name: ecr-secret

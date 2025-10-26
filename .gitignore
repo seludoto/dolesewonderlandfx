@@ -1,0 +1,31 @@
+__pycache__/
+*.pyc
+*.pyo
+dist/
+.venv/
+.env
+node_modules/
+*.log
+/.idea/
+/.vscode/
+*.egg-info/
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
+
+# Terraform state files contain sensitive information
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/.terraform/
+infra/terraform/kubeconfig.yaml
+
+# Database files
+*.db
+data/app.db
+
+# Build artifacts
+.next/
+out/
+build/
+dist/

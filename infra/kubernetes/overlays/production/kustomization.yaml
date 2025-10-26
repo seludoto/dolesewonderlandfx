@@ -1,0 +1,59 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patchesStrategicMerge:
+  - replica-patch.yaml
+  - ingress-patch.yaml
+
+secretGenerator:
+  - name: db-secret
+    literals:
+      - database_url=postgresql://user:password@rds-endpoint:5432/dolesewonderlandfx
+  - name: api-keys
+    literals:
+      - openai_api_key=your-openai-api-key
+      - jwt_secret=your-jwt-secret-key
+      - stripe_secret_key=your-stripe-secret-key
+  - name: email-config
+    literals:
+      - smtp_server=smtp.gmail.com
+      - smtp_port=587
+      - smtp_username=your-email@gmail.com
+      - smtp_password=your-app-password
+      - from_email=noreply@dolesewonderlandfx.com
+  - name: grafana-secret
+    literals:
+      - admin_password=secure-admin-password
+
+images:
+  - name: dolesewonderlandfx/api
+    newTag: latest
+  - name: dolesewonderlandfx/auth
+    newTag: latest
+  - name: dolesewonderlandfx/ai-pipeline
+    newTag: latest
+  - name: dolesewonderlandfx/insight-generator
+    newTag: latest
+  - name: dolesewonderlandfx/backtester
+    newTag: latest
+  - name: dolesewonderlandfx/paper-trading
+    newTag: latest
+  - name: dolesewonderlandfx/email
+    newTag: latest
+  - name: dolesewonderlandfx/social-trading
+    newTag: latest
+  - name: dolesewonderlandfx/prometheus
+    newTag: latest
+  - name: dolesewonderlandfx/grafana
+    newTag: latest
+  - name: dolesewonderlandfx/app-frontend
+    newTag: latest
+  - name: dolesewonderlandfx/admin-panel
+    newTag: latest
+  - name: dolesewonderlandfx/instructor-portal
+    newTag: latest
+  - name: dolesewonderlandfx/web-landing
+    newTag: latest

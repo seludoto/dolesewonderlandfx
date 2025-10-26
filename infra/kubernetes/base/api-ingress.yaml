@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  namespace: dolesewonderlandfx
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+  - host: api.dolesewonderlandfx.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dolesewonderlandfx-api
+            port:
+              number: 8000
+  - host: auth.dolesewonderlandfx.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dolesewonderlandfx-auth
+            port:
+              number: 8000
+  tls:
+  - hosts:
+    - api.dolesewonderlandfx.me
+    - auth.dolesewonderlandfx.me
+    secretName: dolesewonderlandfx-tls
