@@ -3,7 +3,7 @@ import { ArrowRight, Play, TrendingUp, Users, Award } from 'lucide-react'
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 overflow-hidden">
+    <section id="home" className="relative min-h-screen bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-900/50 to-transparent"></div>
 

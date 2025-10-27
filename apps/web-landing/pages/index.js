@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import Navbar from '../components/Navbar'
 import HeroSection from '../components/HeroSection'
 import FeaturesSection from '../components/FeaturesSection'
@@ -54,30 +55,30 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Platform</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">AI Insights</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Trading Courses</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Paper Trading</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Backtesting Lab</a></li>
+                <li><a href="https://app.dolesewonderlandfx.me/ai-trading" className="hover:text-white transition-colors">AI Insights</a></li>
+                <li><a href="https://app.dolesewonderlandfx.me/courses" className="hover:text-white transition-colors">Trading Courses</a></li>
+                <li><a href="https://app.dolesewonderlandfx.me/paper-trading" className="hover:text-white transition-colors">Paper Trading</a></li>
+                <li><a href="https://app.dolesewonderlandfx.me/backtest" className="hover:text-white transition-colors">Backtesting Lab</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/community" className="hover:text-white transition-colors">Community</Link></li>
+                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Risk Disclosure</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cookie Policy</a></li>
+                <li><Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/risk" className="hover:text-white transition-colors">Risk Disclosure</Link></li>
+                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>

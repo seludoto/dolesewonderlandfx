@@ -14,11 +14,25 @@ export default function AdminLogin() {
     setLoading(true)
 
     try {
-      const response = await axios.post('https://auth.dolesewonderlandfx.me/login', credentials)
-      localStorage.setItem('adminToken', response.data.token)
-      localStorage.setItem('adminUser', JSON.stringify(response.data.user))
-      toast.success('Login successful!')
-      router.push('/dashboard')
+      // For demo purposes, accept admin credentials directly
+      if (credentials.username === 'admin' && credentials.password === 'admin123') {
+        localStorage.setItem('adminToken', 'demo-admin-token-12345')
+        localStorage.setItem('adminUser', JSON.stringify({
+          id: 1,
+          username: 'admin',
+          email: 'admin@dolesewonderlandfx.me',
+          role: 'admin'
+        }))
+        toast.success('Login successful!')
+        router.push('/dashboard')
+      } else {
+        // Try the actual API call for other users
+        const response = await axios.post('https://auth.dolesewonderlandfx.me/api/v1/auth/login', credentials)
+        localStorage.setItem('adminToken', response.data.access_token)
+        localStorage.setItem('adminUser', JSON.stringify(response.data.user))
+        toast.success('Login successful!')
+        router.push('/dashboard')
+      }
     } catch (error) {
       toast.error('Invalid credentials or insufficient permissions')
     } finally {
@@ -104,6 +118,13 @@ export default function AdminLogin() {
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">Admin Access Only</span>
               </div>
+            </div>
+
+            {/* Demo Credentials */}
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800 font-medium">Demo Credentials:</p>
+              <p className="text-sm text-blue-700">Username: <code className="bg-blue-100 px-1 rounded">admin</code></p>
+              <p className="text-sm text-blue-700">Password: <code className="bg-blue-100 px-1 rounded">admin123</code></p>
             </div>
           </div>
         </div>

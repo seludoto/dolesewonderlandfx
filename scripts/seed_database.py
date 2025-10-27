@@ -22,11 +22,20 @@ def create_connection(db_file):
 
 def seed_users(conn):
     """Seed the users table with sample data."""
+    from passlib.context import CryptContext
+
+    # Password hashing context
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    # Create hashed passwords
+    admin_password = pwd_context.hash("admin123")
+    user_password = pwd_context.hash("user123")
+
     users = [
-        ('john_doe', 'john@example.com', 'hashed_password_1', 'user', datetime.now()),
-        ('jane_smith', 'jane@example.com', 'hashed_password_2', 'user', datetime.now()),
-        ('instructor_bob', 'bob@instructor.com', 'hashed_password_3', 'instructor', datetime.now()),
-        ('admin_alice', 'alice@admin.com', 'hashed_password_4', 'admin', datetime.now()),
+        ('admin', 'admin@dolesewonderlandfx.me', admin_password, 'admin', datetime.now()),
+        ('john_doe', 'john@example.com', user_password, 'user', datetime.now()),
+        ('jane_smith', 'jane@example.com', user_password, 'user', datetime.now()),
+        ('instructor_bob', 'bob@instructor.com', user_password, 'instructor', datetime.now()),
     ]
 
     sql = '''INSERT INTO users(username, email, password_hash, role, created_at)

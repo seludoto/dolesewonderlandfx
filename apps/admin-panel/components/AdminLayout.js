@@ -9,11 +9,23 @@ import {
   BarChart3,
   LogOut,
   Menu,
-  X
+  X,
+  TrendingUp,
+  DollarSign,
+  BookOpen,
+  Shield,
+  MessageSquare,
+  FileText
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Trading', href: '/trading', icon: TrendingUp },
+  { name: 'Financial', href: '/financial', icon: DollarSign },
+  { name: 'Risk', href: '/risk', icon: Shield },
+  { name: 'Support', href: '/support', icon: MessageSquare },
+  { name: 'Audit', href: '/audit', icon: FileText },
+  { name: 'Content', href: '/content', icon: BookOpen },
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/settings', icon: Settings },
