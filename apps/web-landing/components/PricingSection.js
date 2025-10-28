@@ -62,8 +62,8 @@ const plans = [
 export default function PricingSection() {
   const handlePlanSelect = (planType) => {
     // Redirect to the main platform register page with plan parameter
-    // Using the main domain registration page
-    const registerUrl = `https://dolesewonderlandfx.me/register?plan=${planType}`;
+    // Using the app subdomain for the registration page
+    const registerUrl = `https://app.dolesewonderlandfx.me/register?plan=${planType}`;
     window.open(registerUrl, '_blank');
   };
 
