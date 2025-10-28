@@ -364,6 +364,11 @@ async def get_backtest_result(backtest_id: str):
         error=backtest["error"]
     )
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes"""
+    return {"status": "healthy", "service": "backtester", "version": "2.0.0"}
+
 @app.get("/strategies")
 async def get_strategies():
     """Get available strategies"""
