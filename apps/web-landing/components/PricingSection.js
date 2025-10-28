@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Check, Star, Zap } from 'lucide-react'
+import { useRouter } from 'next/router'
 
 const plans = [
   {
@@ -60,11 +61,17 @@ const plans = [
 ]
 
 export default function PricingSection() {
+  const router = useRouter()
+
   const handlePlanSelect = (planType) => {
     // Redirect to the main platform register page with plan parameter
     // Using the app subdomain for the registration page
     const registerUrl = `https://app.dolesewonderlandfx.me/register?plan=${planType}`;
     window.open(registerUrl, '_blank');
+  };
+
+  const handleViewFAQ = () => {
+    router.push('/help');
   };
 
   return (
@@ -176,7 +183,10 @@ export default function PricingSection() {
           className="mt-12 text-center"
         >
           <p className="text-gray-600 mb-4">Have questions about our plans?</p>
-          <button className="text-primary-600 hover:text-primary-700 font-semibold underline">
+          <button 
+            onClick={handleViewFAQ}
+            className="text-primary-600 hover:text-primary-700 font-semibold underline cursor-pointer"
+          >
             View Frequently Asked Questions →
           </button>
         </motion.div>
