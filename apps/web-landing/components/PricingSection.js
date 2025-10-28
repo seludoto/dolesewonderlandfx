@@ -61,9 +61,9 @@ const plans = [
 
 export default function PricingSection() {
   const handlePlanSelect = (planType) => {
-    // Redirect to the main app signup page with plan parameter
-    const signupUrl = `https://app.dolesewonderlandfx.com/signup?plan=${planType}`;
-    window.open(signupUrl, '_blank');
+    // Redirect to the main app register page with plan parameter
+    const registerUrl = `https://app-frontend-avj7a9jek-selus-projects-5458cfd3.vercel.app/register?plan=${planType}`;
+    window.open(registerUrl, '_blank');
   };
 
   return (
