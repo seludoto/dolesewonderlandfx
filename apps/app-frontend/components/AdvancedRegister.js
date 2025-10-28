@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import {
   Eye,
@@ -23,7 +23,8 @@ export default function AdvancedRegister() {
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
-    subscribeNewsletter: true
+    subscribeNewsletter: true,
+    selectedPlan: '' // Add selected plan
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -32,6 +33,22 @@ export default function AdvancedRegister() {
   const [messageType, setMessageType] = useState('')
   const [passwordStrength, setPasswordStrength] = useState(0)
   const router = useRouter()
+
+  // Handle plan parameter from URL
+  useEffect(() => {
+    if (router.query.plan) {
+      const planMap = {
+        'starter': 'Starter',
+        'pro-trader': 'Pro Trader',
+        'master-trader': 'Master Trader'
+      }
+      const planName = planMap[router.query.plan] || router.query.plan
+      setFormData(prev => ({
+        ...prev,
+        selectedPlan: planName
+      }))
+    }
+  }, [router.query.plan])
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -95,12 +112,18 @@ export default function AdvancedRegister() {
     }
 
     try {
-      // Simulate API call
+      // Simulate API call with plan data
+      const registrationData = {
+        ...formData,
+        plan: formData.selectedPlan || 'free' // Default to free if no plan selected
+      }
+      console.log('Registration data:', registrationData)
+
       await new Promise(resolve => setTimeout(resolve, 2000))
 
       // Mock successful registration
       setMessageType('success')
-      setMessage('Account created successfully! Redirecting to login...')
+      setMessage(`Account created successfully${formData.selectedPlan ? ` with ${formData.selectedPlan} plan` : ''}! Redirecting to login...`)
 
       setTimeout(() => {
         router.push('/login')
@@ -148,6 +171,11 @@ export default function AdvancedRegister() {
           </motion.div>
           <h1 className="text-2xl font-bold">Join dolesewonderlandfx</h1>
           <p className="text-secondary-100 mt-2">Start your forex trading journey today</p>
+          {formData.selectedPlan && (
+            <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
+              <p className="text-sm">Selected Plan: <span className="font-semibold">{formData.selectedPlan}</span></p>
+            </div>
+          )}
         </div>
 
         {/* Form */}

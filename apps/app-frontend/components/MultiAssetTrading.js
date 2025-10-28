@@ -33,7 +33,7 @@ export default function MultiAssetTrading({ accountId }) {
 
   const fetchAccount = async () => {
     try {
-      const response = await axios.get(`http://localhost:8005/api/v1/paper-trading/accounts/${accountId}`)
+      const response = await axios.get(`${process.env.PAPER_TRADING_URL}/api/v1/paper-trading/accounts/${accountId}`)
       setAccount(response.data.account)
     } catch (error) {
       toast.error('Failed to fetch account details')
@@ -42,7 +42,7 @@ export default function MultiAssetTrading({ accountId }) {
 
   const fetchCurrentPrice = async () => {
     try {
-      const response = await axios.get(`http://localhost:8005/api/v1/paper-trading/market/prices?symbols=${selectedSymbol}`)
+      const response = await axios.get(`${process.env.PAPER_TRADING_URL}/api/v1/paper-trading/market/prices?symbols=${selectedSymbol}`)
       const priceData = response.data.prices[selectedSymbol]
       if (priceData) {
         setCurrentPrice(priceData)
@@ -74,7 +74,7 @@ export default function MultiAssetTrading({ accountId }) {
         orderData.price = parseFloat(price)
       }
 
-      const response = await axios.post('http://localhost:8005/api/v1/paper-trading/orders', orderData)
+      const response = await axios.post(`${process.env.PAPER_TRADING_URL}/api/v1/paper-trading/orders`, orderData)
       toast.success('Order placed successfully!')
       fetchAccount() // Refresh account data
     } catch (error) {

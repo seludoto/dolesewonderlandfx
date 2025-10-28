@@ -114,7 +114,7 @@ export default function Courses() {
 
   const buyCourse = async (courseId) => {
     const course = courses.find(c => c.id === courseId)
-    const res = await fetch('http://localhost:8000/create-payment', {
+    const res = await fetch(`${process.env.API_URL}/create-payment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(course.price)

@@ -43,7 +43,7 @@ export default function AITrading() {
 
       switch (selectedStrategy) {
         case 'automated_strategy':
-          endpoint = 'http://localhost:8003/api/v1/ai/automated-strategy'
+          endpoint = `${process.env.AI_URL}/api/v1/ai/automated-strategy`
           payload = {
             symbol: symbol,
             timeframe: timeframe,
@@ -52,7 +52,7 @@ export default function AITrading() {
           }
           break
         case 'portfolio_optimization':
-          endpoint = 'http://localhost:8003/api/v1/ai/portfolio-optimization'
+          endpoint = `${process.env.AI_URL}/api/v1/ai/portfolio-optimization`
           payload = {
             assets: [symbol, 'EUR/USD', 'AAPL', 'BTC/USD'],
             risk_tolerance: 'medium',
@@ -60,7 +60,7 @@ export default function AITrading() {
           }
           break
         case 'sentiment_analysis':
-          endpoint = 'http://localhost:8003/api/v1/ai/sentiment-analysis'
+          endpoint = `${process.env.AI_URL}/api/v1/ai/sentiment-analysis`
           payload = {
             symbol: symbol,
             sources: ['news', 'social_media'],
@@ -68,7 +68,7 @@ export default function AITrading() {
           }
           break
         case 'pattern_recognition':
-          endpoint = 'http://localhost:8003/api/v1/ai/pattern-recognition'
+          endpoint = `${process.env.AI_URL}/api/v1/ai/pattern-recognition`
           payload = {
             symbol: symbol,
             timeframe: timeframe,
@@ -76,7 +76,7 @@ export default function AITrading() {
           }
           break
         case 'backtest_optimization':
-          endpoint = 'http://localhost:8003/api/v1/ai/backtest-optimization'
+          endpoint = `${process.env.AI_URL}/api/v1/ai/backtest-optimization`
           payload = {
             strategy_type: 'moving_average_crossover',
             symbol: symbol,

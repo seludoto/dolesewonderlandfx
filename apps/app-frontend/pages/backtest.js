@@ -55,7 +55,10 @@ export default function Backtest() {
   const [optimizationResult, setOptimizationResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [customStrategyCode, setCustomStrategyCode] = useState('')
+  const [customStrategyName, setCustomStrategyName] = useState('')
   const [result, setResult] = useState(null)
+  const [activeTab, setActiveTab] = useState('predefined')
 
   useEffect(() => {
     fetchStrategies()
@@ -73,7 +76,14 @@ export default function Backtest() {
         setParameters(defaultParams)
       }
     }
-  }, [selectedStrategy, strategies])
+  }, [selectedStrategy])
+
+  const handleParameterChange = (key, value) => {
+    setParameters(prev => ({
+      ...prev,
+      [key]: value
+    }))
+  }
 
   const fetchStrategies = async () => {
     try {
@@ -182,11 +192,47 @@ export default function Backtest() {
     }
   }
 
-  const handleParameterChange = (key, value) => {
-    setParameters(prev => ({
-      ...prev,
-      [key]: value
-    }))
+  const runCustomBacktest = async () => {
+    setLoading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const requestData = {
+        strategy_code: customStrategyCode,
+        strategy_name: customStrategyName || 'Custom Strategy',
+        symbol: selectedSymbol,
+        timeframe,
+        start_date: startDate,
+        end_date: endDate,
+        initial_cash: initialCash,
+        commission,
+        parameters
+      }
+
+      const res = await fetch('https://backtester.dolesewonderlandfx.com/custom-backtest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
+      const data = await res.json()
+
+      if (data.status === 'completed') {
+        setResult(data.result)
+        toast.success('Custom strategy backtest completed!')
+      } else {
+        setError(data.error || 'Custom backtest failed')
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to run custom backtest')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const equityChartData = result?.equity_curve ? {
@@ -235,37 +281,66 @@ export default function Backtest() {
           </p>
         </div>
 
+        {/* Strategy Type Tabs */}
+        <div className="mb-8">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab('predefined')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'predefined'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Predefined Strategies
+              </button>
+              <button
+                onClick={() => setActiveTab('custom')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'custom'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Custom Strategy
+              </button>
+            </nav>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Configuration Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold mb-6 flex items-center">
-                <Settings className="h-5 w-5 mr-2" />
-                Configuration
-              </h2>
+            {activeTab === 'predefined' ? (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <h2 className="text-xl font-semibold mb-6 flex items-center">
+                  <Settings className="h-5 w-5 mr-2" />
+                  Predefined Strategy
+                </h2>
 
-              {/* Strategy Selection */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Trading Strategy
-                </label>
-                <select
-                  value={selectedStrategy}
-                  onChange={(e) => setSelectedStrategy(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {strategies.map(strategy => (
-                    <option key={strategy.id} value={strategy.id}>
-                      {strategy.name}
-                    </option>
-                  ))}
-                </select>
-                {selectedStrategyData && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {selectedStrategyData.description}
-                  </p>
-                )}
-              </div>
+                {/* Strategy Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Trading Strategy
+                  </label>
+                  <select
+                    value={selectedStrategy}
+                    onChange={(e) => setSelectedStrategy(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {strategies.map(strategy => (
+                      <option key={strategy.id} value={strategy.id}>
+                        {strategy.name}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedStrategyData && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      {selectedStrategyData.description}
+                    </p>
+                  )}
+                </div>
 
               {/* Symbol Selection */}
               <div className="mb-6">
@@ -426,6 +501,180 @@ export default function Backtest() {
                 </div>
               )}
             </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <h2 className="text-xl font-semibold mb-6 flex items-center">
+                  <Settings className="h-5 w-5 mr-2" />
+                  Custom Strategy
+                </h2>
+
+                {/* Strategy Name */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Strategy Name
+                  </label>
+                  <input
+                    type="text"
+                    value={customStrategyName}
+                    onChange={(e) => setCustomStrategyName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="My Custom Strategy"
+                  />
+                </div>
+
+                {/* Strategy Code */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Strategy Code (Python/Backtrader)
+                  </label>
+                  <textarea
+                    value={customStrategyCode}
+                    onChange={(e) => setCustomStrategyCode(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                    rows="15"
+                    placeholder={`import backtrader as bt
+
+class MyStrategy(bt.Strategy):
+    params = (
+        ('fast_period', 10),
+        ('slow_period', 30),
+    )
+
+    def __init__(self):
+        self.fast_ma = bt.indicators.SimpleMovingAverage(self.data.close, period=self.params.fast_period)
+        self.slow_ma = bt.indicators.SimpleMovingAverage(self.data.close, period=self.params.slow_period)
+        self.crossover = bt.indicators.CrossOver(self.fast_ma, self.slow_ma)
+
+    def next(self):
+        if not self.position:
+            if self.crossover > 0:
+                self.buy()
+        elif self.crossover < 0:
+            self.sell()`}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Write a Backtrader strategy class that inherits from bt.Strategy
+                  </p>
+                </div>
+
+                {/* Symbol Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Trading Symbol
+                  </label>
+                  <select
+                    value={selectedSymbol}
+                    onChange={(e) => setSelectedSymbol(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {symbols.map(symbol => (
+                      <option key={symbol.symbol} value={symbol.symbol}>
+                        {symbol.symbol} - {symbol.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Timeframe */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Timeframe
+                  </label>
+                  <select
+                    value={timeframe}
+                    onChange={(e) => setTimeframe(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="1d">Daily</option>
+                    <option value="1h">Hourly</option>
+                    <option value="30m">30 Minutes</option>
+                    <option value="15m">15 Minutes</option>
+                    <option value="5m">5 Minutes</option>
+                  </select>
+                </div>
+
+                {/* Date Range */}
+                <div className="mb-6 grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Trading Parameters */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Initial Capital ($)
+                  </label>
+                  <input
+                    type="number"
+                    value={initialCash}
+                    onChange={(e) => setInitialCash(Number(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    min="100"
+                    step="100"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Commission (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={commission * 100}
+                    onChange={(e) => setCommission(Number(e.target.value) / 100)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                {/* Run Custom Backtest Button */}
+                <button
+                  onClick={runCustomBacktest}
+                  disabled={loading || !customStrategyCode.trim()}
+                  className="w-full bg-green-600 text-white px-4 py-3 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                      Running Custom Backtest...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-5 w-5 mr-2" />
+                      Run Custom Backtest
+                    </>
+                  )}
+                </button>
+
+                {error && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center">
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                    <span className="text-red-700 text-sm">{error}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Results Panel */}

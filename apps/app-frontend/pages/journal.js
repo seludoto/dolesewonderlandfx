@@ -6,14 +6,14 @@ export default function Journal() {
   const [newTrade, setNewTrade] = useState({ pair: '', entry: '', exit: '', profit: '' })
 
   useEffect(() => {
-    fetch('http://localhost:8000/trades')
+    fetch(`${process.env.API_URL}/trades`)
       .then(res => res.json())
       .then(data => setTrades(data))
       .catch(() => setTrades([]))
   }, [])
 
   const addTrade = async () => {
-    await fetch('http://localhost:8000/trades', {
+    await fetch(`${process.env.API_URL}/trades`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newTrade)

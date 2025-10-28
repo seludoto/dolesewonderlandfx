@@ -20,7 +20,7 @@ export default function SocialTrading({ userId }) {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get('http://localhost:8007/api/v1/social/leaderboard?limit=20')
+      const response = await axios.get(`${process.env.SOCIAL_TRADING_URL}/api/v1/social/leaderboard?limit=20`)
       setLeaderboard(response.data.leaderboard || [])
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error)
@@ -29,7 +29,7 @@ export default function SocialTrading({ userId }) {
 
   const fetchFollowing = async () => {
     try {
-      const response = await axios.get(`http://localhost:8007/api/v1/social/following/${userId}`)
+      const response = await axios.get(`${process.env.SOCIAL_TRADING_URL}/api/v1/social/following/${userId}`)
       setFollowing(response.data.following || [])
     } catch (error) {
       console.error('Failed to fetch following:', error)
@@ -38,7 +38,7 @@ export default function SocialTrading({ userId }) {
 
   const fetchFollowers = async () => {
     try {
-      const response = await axios.get(`http://localhost:8007/api/v1/social/followers/${userId}`)
+      const response = await axios.get(`${process.env.SOCIAL_TRADING_URL}/api/v1/social/followers/${userId}`)
       setFollowers(response.data.followers || [])
     } catch (error) {
       console.error('Failed to fetch followers:', error)
@@ -66,7 +66,7 @@ export default function SocialTrading({ userId }) {
   const followTrader = async (traderId) => {
     setLoading(true)
     try {
-      await axios.post('http://localhost:8007/api/v1/social/follow', {
+      await axios.post(`${process.env.SOCIAL_TRADING_URL}/api/v1/social/follow`, {
         follower_id: userId,
         trader_id: traderId
       })
@@ -83,7 +83,7 @@ export default function SocialTrading({ userId }) {
   const unfollowTrader = async (traderId) => {
     setLoading(true)
     try {
-      await axios.post('http://localhost:8007/api/v1/social/unfollow', {
+      await axios.post(`${process.env.SOCIAL_TRADING_URL}/api/v1/social/unfollow`, {
         follower_id: userId,
         trader_id: traderId
       })
