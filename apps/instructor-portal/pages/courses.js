@@ -10,7 +10,7 @@ import {
   UserGroupIcon,
   ClockIcon,
   StarIcon
-} from '@heroicons/react/outline'
+} from '@heroicons/react/24/outline'
 
 const courses = [
   {

@@ -7,7 +7,7 @@ import {
   CheckCircleIcon,
   MailIcon,
   PhoneIcon
-} from '@heroicons/react/outline'
+} from '@heroicons/react/24/outline'
 
 const students = [
   {

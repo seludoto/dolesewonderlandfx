@@ -12,7 +12,7 @@ import {
   XIcon,
   UserGroupIcon,
   AcademicCapIcon
-} from '@heroicons/react/outline'
+} from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
