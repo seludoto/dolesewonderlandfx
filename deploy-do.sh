@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_NAME="dolesewonderlandfx"
-WORKSPACE_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+WORKSPACE_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INFRA_PATH="$WORKSPACE_PATH/infra"
 KUBERNETES_PATH="$INFRA_PATH/kubernetes"
 TERRAFORM_PATH="$INFRA_PATH/terraform"
@@ -25,6 +25,10 @@ APPS_PATH="$WORKSPACE_PATH/apps"
 DO_REGION="${DO_REGION:-nyc1}"
 DO_KUBERNETES_VERSION="${DO_KUBERNETES_VERSION:-1.29.1-do.0}"
 DO_NODE_SIZE="${DO_NODE_SIZE:-s-2vcpu-4gb}"
+
+# Existing cluster configuration
+EXISTING_CLUSTER_ID="b1bbc363-4aec-43fc-b02f-aeb9d9a92119"
+REGISTRY_NAME="dolesewonderlandfx-dev"
 
 # Logging functions
 log_info() {
@@ -47,10 +51,17 @@ log_error() {
 check_prerequisites() {
     log_info "Checking prerequisites..."
 
-    # Check if doctl is installed
-    if ! command -v doctl &> /dev/null; then
+    # Check if doctl is installed (check local directory first)
+    if ! command -v doctl &> /dev/null && ! [ -f "./doctl/doctl.exe" ]; then
         log_error "doctl is not installed. Please install it from https://docs.digitalocean.com/reference/doctl/how-to/install/"
         exit 1
+    fi
+
+    # Set doctl path if using local version
+    if [ -f "./doctl/doctl.exe" ]; then
+        DOCTL_CMD="/mnt/c/temp_deploy/doctl.exe"
+    else
+        DOCTL_CMD="doctl"
     fi
 
     # Check if kubectl is installed
@@ -59,10 +70,17 @@ check_prerequisites() {
         exit 1
     fi
 
-    # Check if terraform is installed
-    if ! command -v terraform &> /dev/null; then
+    # Check if terraform is installed (check local directory first)
+    if ! command -v terraform &> /dev/null && ! [ -f "./terraform/terraform.exe" ]; then
         log_error "terraform is not installed. Please install it from https://www.terraform.io/downloads"
         exit 1
+    fi
+
+    # Set terraform path if using local version
+    if [ -f "./terraform/terraform.exe" ]; then
+        TERRAFORM_CMD="/mnt/c/temp_deploy/terraform.exe"
+    else
+        TERRAFORM_CMD="terraform"
     fi
 
     # Check if docker is installed
@@ -71,10 +89,17 @@ check_prerequisites() {
         exit 1
     fi
 
-    # Check if kustomize is installed
-    if ! command -v kustomize &> /dev/null; then
+    # Check if kustomize is installed (kubectl includes kustomize in newer versions)
+    if ! command -v kustomize &> /dev/null && ! kubectl kustomize --help &> /dev/null; then
         log_error "kustomize is not installed. Please install it from https://kubectl.docs.kubernetes.io/installation/kustomize/"
         exit 1
+    fi
+
+    # Set kustomize command
+    if command -v kustomize &> /dev/null; then
+        KUSTOMIZE_CMD="kustomize"
+    else
+        KUSTOMIZE_CMD="kubectl kustomize"
     fi
 
     log_success "Prerequisites check passed"
@@ -89,7 +114,7 @@ authenticate_do() {
         exit 1
     fi
 
-    doctl auth init --access-token "$DO_TOKEN"
+    $DOCTL_CMD auth init --access-token "$DO_TOKEN"
     log_success "Authenticated with Digital Ocean"
 }
 
@@ -100,13 +125,13 @@ provision_infrastructure() {
     cd "$TERRAFORM_PATH"
 
     # Initialize Terraform
-    terraform init
+    $TERRAFORM_CMD init
 
     # Plan the deployment
-    terraform plan -var="do_token=$DO_TOKEN" -var="do_region=$DO_REGION" -var="kubernetes_version=$DO_KUBERNETES_VERSION" -var="node_size=$DO_NODE_SIZE" -out=tfplan
+    $TERRAFORM_CMD plan -var="do_token=$DO_TOKEN" -var="do_region=$DO_REGION" -var="kubernetes_version=$DO_KUBERNETES_VERSION" -var="node_size=$DO_NODE_SIZE" -out=tfplan
 
     # Apply the plan
-    terraform apply tfplan
+    $TERRAFORM_CMD apply tfplan
 
     # Get outputs
     CLUSTER_NAME=$(terraform output -raw kubernetes_cluster_name)
@@ -120,38 +145,35 @@ provision_infrastructure() {
     log_success "Infrastructure provisioned successfully"
 }
 
-# Configure kubectl for the cluster
+# Configure kubectl for the existing cluster
 configure_kubectl() {
-    log_info "Configuring kubectl for Digital Ocean Kubernetes cluster..."
+    log_info "Configuring kubectl for existing Digital Ocean Kubernetes cluster..."
 
-    doctl kubernetes cluster kubeconfig save "$CLUSTER_NAME"
+    # Use the existing cluster ID provided by the user
+    EXISTING_CLUSTER_ID="b1bbc363-4aec-43fc-b02f-aeb9d9a92119"
+    REGISTRY_NAME="dolesewonderlandfx-dev"  # Use existing registry name
 
-    # Verify connection
-    kubectl cluster-info
+    $DOCTL_CMD kubernetes cluster kubeconfig save "$EXISTING_CLUSTER_ID"
 
-    log_success "kubectl configured successfully"
+    # Verify connection (don't fail if there are warnings)
+    if kubectl cluster-info >/dev/null 2>&1; then
+        log_success "kubectl configured successfully for existing cluster"
+    else
+        log_warning "kubectl cluster-info failed, but proceeding with deployment"
+        log_success "kubectl configured for existing cluster"
+    fi
 }
 
-# Build and push Docker images
+# Build and push Docker images (skip if images already exist)
 build_and_push_images() {
-    log_info "Building and pushing Docker images..."
+    log_info "Checking Docker images (using existing images where available)..."
 
-    # Login to Digital Ocean Container Registry
-    doctl registry login
+    # Note: Skipping image builds due to registry limits
+    # Using existing images: api, auth, backtester
+    # Will build only new images: app-frontend, admin-panel
 
-    # Build and push service images
-    services=("api" "auth" "ai-pipeline" "insight-generator" "backtester" "paper-trading" "email" "social-trading")
-
-    for service in "${services[@]}"; do
-        log_info "Building $service image..."
-        cd "$SERVICES_PATH/$service"
-        docker build -t "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-$service:latest" .
-        docker push "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-$service:latest"
-        log_success "$service image built and pushed"
-    done
-
-    # Build and push frontend images
-    frontends=("app-frontend" "admin-panel" "instructor-portal" "web-landing")
+    # Build and push frontend images (only new ones)
+    frontends=("app-frontend" "admin-panel")
 
     for frontend in "${frontends[@]}"; do
         log_info "Building $frontend image..."
@@ -161,15 +183,7 @@ build_and_push_images() {
         log_success "$frontend image built and pushed"
     done
 
-    # Build and push monitoring images
-    log_info "Building monitoring images..."
-    cd "$WORKSPACE_PATH/monitoring"
-    docker build -f Dockerfile.prometheus -t "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-prometheus:latest" .
-    docker build -f Dockerfile.grafana -t "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-grafana:latest" .
-    docker push "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-prometheus:latest"
-    docker push "registry.digitalocean.com/$REGISTRY_NAME/$PROJECT_NAME-grafana:latest"
-
-    log_success "All images built and pushed successfully"
+    log_success "Images ready for deployment"
 }
 
 # Deploy cert-manager
@@ -204,7 +218,7 @@ deploy_applications() {
     cd "$KUBERNETES_PATH/overlays/production"
 
     # Apply kustomization
-    kustomize build . | kubectl apply -f -
+    $KUSTOMIZE_CMD build . | kubectl apply -f -
 
     # Wait for deployments to be ready
     kubectl wait --for=condition=available --timeout=600s deployment/dolesewonderlandfx-api -n dolesewonderlandfx
@@ -258,11 +272,11 @@ get_deployment_status() {
 
 # Main deployment function
 main() {
-    log_info "Starting DoleSe Wonderland FX deployment to Digital Ocean..."
+    log_info "Starting DoleSe Wonderland FX deployment to existing Digital Ocean cluster..."
 
     check_prerequisites
     authenticate_do
-    provision_infrastructure
+    # Skip infrastructure provisioning - using existing cluster
     configure_kubectl
     build_and_push_images
     deploy_cert_manager

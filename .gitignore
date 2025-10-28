@@ -29,3 +29,13 @@ data/app.db
 out/
 build/
 dist/
+
+# Binary executables and tools
+doctl/
+doctl.zip
+doctl.exe
+terraform/
+terraform.zip
+terraform.exe
+*.exe
+*.zip

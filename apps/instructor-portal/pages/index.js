@@ -4,7 +4,7 @@ export default function InstructorPortal() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Instructor Portal - DoleSe Wonderland FX</title>
+        <title>Instructor Portal - dolesewonderlandfx</title>
         <meta name="description" content="Course authoring and management portal" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

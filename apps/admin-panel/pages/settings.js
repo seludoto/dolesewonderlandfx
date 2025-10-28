@@ -14,7 +14,7 @@ import {
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
-    siteName: 'DoleSe Wonderland FX',
+    siteName: 'dolesewonderlandfx',
     siteDescription: 'Advanced AI-powered trading platform',
     adminEmail: 'admin@dolesewonderlandfx.com',
     enableRegistration: true,

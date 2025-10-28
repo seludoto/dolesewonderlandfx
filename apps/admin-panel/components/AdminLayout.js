@@ -15,7 +15,8 @@ import {
   BookOpen,
   Shield,
   MessageSquare,
-  FileText
+  FileText,
+  Key
 } from 'lucide-react'
 
 const navigation = [
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Audit', href: '/audit', icon: FileText },
   { name: 'Content', href: '/content', icon: BookOpen },
   { name: 'Users', href: '/users', icon: Users },
+  { name: 'Credentials', href: '/credentials', icon: Key },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
@@ -156,7 +158,7 @@ export default function AdminLayout({ children }) {
                 </label>
                 <div className="relative w-full text-gray-400 focus-within:text-gray-600">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                    <span className="text-sm">DoleSe Wonderland FX Admin</span>
+                    <span className="text-sm">dolesewonderlandfx Admin</span>
                   </div>
                 </div>
               </div>

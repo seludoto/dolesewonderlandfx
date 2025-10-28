@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: backtester
-        image: registry.digitalocean.com/dolesewonderlandfx-dev/backtester:latest
+        image: registry.digitalocean.com/dolesewonderlandfx-dev/backtester:v2
         ports:
         - containerPort: 8001
           name: http

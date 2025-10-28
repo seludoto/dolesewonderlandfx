@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Optional, Any
@@ -11,6 +11,12 @@ import uuid
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
+import tempfile
+import os
+import importlib.util
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,6 +47,17 @@ class BacktestRequest(BaseModel):
     commission: float = 0.001
     parameters: Dict[str, Any] = {}
 
+class CustomStrategyRequest(BaseModel):
+    strategy_code: str
+    strategy_name: str
+    symbol: str
+    timeframe: str = "1d"
+    start_date: str
+    end_date: str
+    initial_cash: float = 10000.0
+    commission: float = 0.001
+    parameters: Dict[str, Any] = {}
+
 class OptimizationRequest(BaseModel):
     strategy: str
     symbol: str
@@ -49,8 +66,7 @@ class OptimizationRequest(BaseModel):
     end_date: str
     initial_cash: float = 10000.0
     commission: float = 0.001
-    param_ranges: Dict[str, List[Any]] = {}
-    optimization_method: str = "grid"  # grid, genetic, or random
+    param_ranges: Optional[Dict[str, Any]] = {}
 
 class BacktestResult(BaseModel):
     id: str
@@ -134,13 +150,47 @@ class BollingerBandsStrategy(bt.Strategy):
             self.sell()
 
 def get_strategy_class(strategy_name: str):
+    """Get strategy class by name"""
     strategies = {
-        'sma_cross': SMACrossStrategy,
-        'rsi': RSIStrategy,
-        'macd': MACDStrategy,
-        'bollinger_bands': BollingerBandsStrategy,
+        "sma_cross": SMACrossStrategy,
+        "rsi": RSIStrategy,
+        "macd": MACDStrategy,
+        "bollinger_bands": BollingerBandsStrategy
     }
-    return strategies.get(strategy_name)
+    if strategy_name not in strategies:
+        raise ValueError(f"Unknown strategy: {strategy_name}")
+    return strategies[strategy_name]
+
+def load_custom_strategy(strategy_code: str, strategy_name: str):
+    """Dynamically load a custom strategy from code string"""
+    try:
+        # Create a temporary file for the strategy
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            f.write(strategy_code)
+            temp_file = f.name
+
+        # Load the module
+        spec = importlib.util.spec_from_file_location(strategy_name, temp_file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        # Find the strategy class (should inherit from bt.Strategy)
+        for attr_name in dir(module):
+            attr = getattr(module, attr_name)
+            if (isinstance(attr, type) and
+                issubclass(attr, bt.Strategy) and
+                attr != bt.Strategy):
+                # Clean up temp file
+                os.unlink(temp_file)
+                return attr
+
+        # Clean up temp file
+        os.unlink(temp_file)
+        raise ValueError("No valid Backtrader strategy class found in the code")
+
+    except Exception as e:
+        logger.error(f"Error loading custom strategy: {str(e)}")
+        raise
 
 def download_data(symbol: str, start_date: str, end_date: str, timeframe: str = "1d"):
     """Generate mock historical data for backtesting"""
@@ -302,12 +352,16 @@ def run_backtest(request: BacktestRequest) -> Dict[str, Any]:
         logger.error(f"Backtest error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Backtest failed: {str(e)}")
 
-@app.post("/backtest", response_model=BacktestResult)
-async def backtest(request: BacktestRequest, background_tasks: BackgroundTasks):
-    """Run a backtest synchronously"""
+@app.post("/custom-backtest", response_model=BacktestResult)
+async def custom_backtest(request: CustomStrategyRequest, background_tasks: BackgroundTasks):
+    """Run a custom strategy backtest"""
     try:
+        # Load the custom strategy
+        strategy_class = load_custom_strategy(request.strategy_code, request.strategy_name)
+
+        # Run the backtest
         result = await asyncio.get_event_loop().run_in_executor(
-            executor, run_backtest, request
+            executor, run_custom_backtest, request, strategy_class
         )
 
         return BacktestResult(
@@ -321,6 +375,90 @@ async def backtest(request: BacktestRequest, background_tasks: BackgroundTasks):
             status="failed",
             error=str(e)
         )
+
+def run_custom_backtest(request: CustomStrategyRequest, strategy_class):
+    """Run a custom strategy backtest"""
+    try:
+        # Download data
+        data = download_data(request.symbol, request.start_date, request.end_date, request.timeframe)
+
+        # Create cerebro
+        cerebro = bt.Cerebro()
+        cerebro.addstrategy(strategy_class, **request.parameters)
+        cerebro.broker.setcash(request.initial_cash)
+        cerebro.broker.setcommission(commission=request.commission)
+
+        # Add data feed
+        data_feed = bt.feeds.PandasData(dataname=data)
+        cerebro.adddata(data_feed)
+
+        # Add analyzers
+        cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
+        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
+        cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
+        cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
+        cerebro.addanalyzer(bt.analyzers.TimeReturn, _name='timereturn')
+
+        # Run backtest
+        results = cerebro.run()
+        strat = results[0]
+
+        # Extract results (same as regular backtest)
+        final_value = cerebro.broker.getvalue()
+        total_return = (final_value - request.initial_cash) / request.initial_cash * 100
+
+        sharpe_ratio = strat.analyzers.sharpe.get_analysis().get('sharperatio', 0)
+        max_drawdown = strat.analyzers.drawdown.get_analysis().get('max', {}).get('drawdown', 0)
+        returns_analysis = strat.analyzers.returns.get_analysis()
+        trades_analysis = strat.analyzers.trades.get_analysis()
+
+        win_rate = 0
+        if 'won' in trades_analysis and 'total' in trades_analysis:
+            won_trades = trades_analysis['won']['total']
+            total_trades = trades_analysis['total']['total']
+            win_rate = (won_trades / total_trades * 100) if total_trades > 0 else 0
+
+        trades = []
+        if 'trades' in trades_analysis:
+            for trade_data in trades_analysis.get('trades', []):
+                if isinstance(trade_data, dict):
+                    trades.append({
+                        'symbol': request.symbol,
+                        'pnl': trade_data.get('pnl', 0),
+                        'pnlcomm': trade_data.get('pnlcomm', 0),
+                        'size': trade_data.get('size', 0)
+                    })
+
+        if not trades:
+            trades = [{
+                'symbol': request.symbol,
+                'total_trades': trades_analysis.get('total', {}).get('total', 0),
+                'won_trades': trades_analysis.get('won', {}).get('total', 0),
+                'lost_trades': trades_analysis.get('lost', {}).get('total', 0)
+            }]
+
+        return {
+            'total_return': round(total_return, 2),
+            'sharpe_ratio': round(sharpe_ratio, 2) if sharpe_ratio else 0,
+            'max_drawdown': round(max_drawdown, 2),
+            'win_rate': round(win_rate, 2),
+            'final_value': round(final_value, 2),
+            'total_trades': trades_analysis.get('total', {}).get('total', 0),
+            'won_trades': trades_analysis.get('won', {}).get('total', 0),
+            'lost_trades': trades_analysis.get('lost', {}).get('total', 0),
+            'avg_win': round(trades_analysis.get('won', {}).get('pnl', {}).get('average', 0), 2),
+            'avg_loss': round(trades_analysis.get('lost', {}).get('pnl', {}).get('average', 0), 2),
+            'largest_win': round(trades_analysis.get('won', {}).get('pnl', {}).get('max', 0), 2),
+            'largest_loss': round(trades_analysis.get('lost', {}).get('pnl', {}).get('max', 0), 2),
+            'trades': trades,
+            'equity_curve': list(strat.analyzers.timereturn.get_analysis().values()),
+            'parameters': request.parameters,
+            'strategy_name': request.strategy_name
+        }
+
+    except Exception as e:
+        logger.error(f"Custom backtest error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Custom backtest failed: {str(e)}")
 
 @app.post("/backtest/async", response_model=BacktestResult)
 async def backtest_async(request: BacktestRequest, background_tasks: BackgroundTasks):

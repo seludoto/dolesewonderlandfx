@@ -54,7 +54,7 @@ export default function Dashboard() {
   return (
     <AdminLayout>
       <Head>
-        <title>Admin Dashboard - DoleSe Wonderland FX</title>
+        <title>Admin Dashboard - dolesewonderlandfx</title>
       </Head>
 
       <div className="px-4 sm:px-6 lg:px-8">
