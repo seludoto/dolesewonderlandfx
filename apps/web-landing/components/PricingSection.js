@@ -60,6 +60,12 @@ const plans = [
 ]
 
 export default function PricingSection() {
+  const handlePlanSelect = (planType) => {
+    // Redirect to the main app signup page with plan parameter
+    const signupUrl = `https://app.dolesewonderlandfx.com/signup?plan=${planType}`;
+    window.open(signupUrl, '_blank');
+  };
+
   return (
     <section id="pricing" className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -112,6 +118,7 @@ export default function PricingSection() {
                   </div>
 
                   <button
+                    onClick={() => handlePlanSelect(plan.name.toLowerCase().replace(' ', '-'))}
                     className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                       plan.buttonVariant === 'primary'
                         ? 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
