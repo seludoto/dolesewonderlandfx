@@ -53,6 +53,9 @@ export default function Backtest() {
   const [parameters, setParameters] = useState({})
   const [optimizing, setOptimizing] = useState(false)
   const [optimizationResult, setOptimizationResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [result, setResult] = useState(null)
 
   useEffect(() => {
     fetchStrategies()
@@ -74,7 +77,7 @@ export default function Backtest() {
 
   const fetchStrategies = async () => {
     try {
-      const res = await fetch('http://localhost:8001/strategies')
+      const res = await fetch('https://backtester.dolesewonderlandfx.com/strategies')
       const data = await res.json()
       setStrategies(data.strategies)
       if (data.strategies.length > 0) {
@@ -87,7 +90,7 @@ export default function Backtest() {
 
   const fetchSymbols = async () => {
     try {
-      const res = await fetch('http://localhost:8001/symbols')
+      const res = await fetch('https://backtester.dolesewonderlandfx.com/symbols')
       const data = await res.json()
       setSymbols(data.symbols)
     } catch (err) {
@@ -112,7 +115,7 @@ export default function Backtest() {
         param_ranges: {} // Will be populated based on strategy
       }
 
-      const res = await fetch('http://localhost:8001/optimize', {
+      const res = await fetch('https://backtester.dolesewonderlandfx.com/optimize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
@@ -134,6 +137,48 @@ export default function Backtest() {
       setError(err.message || 'Failed to optimize strategy')
     } finally {
       setOptimizing(false)
+    }
+  }
+
+  const runBacktest = async () => {
+    setLoading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const requestData = {
+        strategy: selectedStrategy,
+        symbol: selectedSymbol,
+        timeframe,
+        start_date: startDate,
+        end_date: endDate,
+        initial_cash: initialCash,
+        commission,
+        parameters
+      }
+
+      const res = await fetch('https://backtester.dolesewonderlandfx.com/backtest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
+      const data = await res.json()
+
+      if (data.status === 'completed') {
+        setResult(data.result)
+        toast.success('Backtest completed!')
+      } else {
+        setError(data.error || 'Backtest failed')
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to run backtest')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -590,7 +635,7 @@ export default function Backtest() {
                 <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Yet</h3>
                 <p className="text-gray-500">
-                  Configure your strategy parameters and click "Run Backtest" to see performance results.
+                  Configure your strategy parameters and click &quot;Run Backtest&quot; to see performance results.
                 </p>
               </div>
             )}
