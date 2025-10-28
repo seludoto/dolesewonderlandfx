@@ -8,8 +8,8 @@ import {
   VideoCameraIcon,
   DocumentTextIcon,
   CogIcon,
-  MenuIcon,
-  XIcon,
+  Bars3Icon,
+  XMarkIcon,
   UserGroupIcon,
   AcademicCapIcon
 } from '@heroicons/react/24/outline'
@@ -41,7 +41,7 @@ export default function InstructorLayout({ children }) {
               className="text-gray-400 hover:text-gray-500"
               onClick={() => setSidebarOpen(false)}
             >
-              <XIcon className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-1">
@@ -105,7 +105,7 @@ export default function InstructorLayout({ children }) {
             className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <MenuIcon className="h-6 w-6" />
+            <Bars3Icon className="h-6 w-6" />
           </button>
           <div className="flex flex-1 justify-between px-4">
             <div className="flex flex-1">

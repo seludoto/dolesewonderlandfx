@@ -2,10 +2,10 @@ import Head from 'next/head'
 import InstructorLayout from '../components/InstructorLayout'
 import {
   UserGroupIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ClockIcon,
   CheckCircleIcon,
-  MailIcon,
+  EnvelopeIcon,
   PhoneIcon
 } from '@heroicons/react/24/outline'
 
@@ -71,7 +71,7 @@ const stats = [
   {
     name: 'Active Students',
     value: students.filter(s => s.status === 'Active').length,
-    icon: TrendingUpIcon,
+    icon: ArrowTrendingUpIcon,
     color: 'text-green-600',
     bgColor: 'bg-green-100'
   },
@@ -85,7 +85,7 @@ const stats = [
   {
     name: 'Total Revenue',
     value: `$${students.reduce((sum, s) => sum + s.totalSpent, 0)}`,
-    icon: TrendingUpIcon,
+    icon: ArrowTrendingUpIcon,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-100'
   }
@@ -187,7 +187,7 @@ export default function StudentsPage() {
                             {student.name}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <MailIcon className="h-3 w-3 mr-1" />
+                            <EnvelopeIcon className="h-3 w-3 mr-1" />
                             {student.email}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">

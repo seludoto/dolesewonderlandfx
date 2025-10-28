@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   CurrencyDollarIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
 
@@ -34,7 +34,7 @@ const stats = [
   {
     name: 'Completion Rate',
     value: '78%',
-    icon: TrendingUpIcon,
+    icon: ArrowTrendingUpIcon,
     color: 'text-purple-600',
     bgColor: 'bg-purple-100'
   }

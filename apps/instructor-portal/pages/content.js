@@ -3,8 +3,8 @@ import InstructorLayout from '../components/InstructorLayout'
 import {
   VideoCameraIcon,
   DocumentTextIcon,
-  PhotographIcon,
-  UploadIcon,
+  PhotoIcon,
+  ArrowUpTrayIcon,
   PlayIcon,
   PencilIcon,
   TrashIcon,
@@ -72,7 +72,7 @@ const quickActions = [
   {
     name: 'Add Resources',
     description: 'Upload documents and materials',
-    icon: PhotographIcon,
+    icon: PhotoIcon,
     color: 'text-purple-600',
     bgColor: 'bg-purple-100'
   }
@@ -140,7 +140,7 @@ export default function ContentPage() {
                   <option>Documents</option>
                 </select>
                 <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                  <UploadIcon className="h-4 w-4 mr-2" />
+                  <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
                   Upload
                 </button>
               </div>
@@ -161,7 +161,7 @@ export default function ContentPage() {
                         }`}>
                           {item.type === 'video' && <VideoCameraIcon className="h-5 w-5 text-blue-600" />}
                           {item.type === 'quiz' && <DocumentTextIcon className="h-5 w-5 text-green-600" />}
-                          {item.type === 'document' && <PhotographIcon className="h-5 w-5 text-purple-600" />}
+                          {item.type === 'document' && <PhotoIcon className="h-5 w-5 text-purple-600" />}
                         </div>
                       </div>
                       <div className="ml-4">
@@ -221,14 +221,14 @@ export default function ContentPage() {
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="text-center">
-                <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">Upload new content</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Drag and drop files here, or click to browse
                 </p>
                 <div className="mt-4">
                   <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    <UploadIcon className="h-4 w-4 mr-2" />
+                    <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
                     Choose Files
                   </button>
                 </div>
@@ -286,7 +286,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <PhotographIcon className="h-6 w-6 text-purple-600" />
+                  <PhotoIcon className="h-6 w-6 text-purple-600" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -306,7 +306,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <UploadIcon className="h-6 w-6 text-gray-600" />
+                  <ArrowUpTrayIcon className="h-6 w-6 text-gray-600" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
