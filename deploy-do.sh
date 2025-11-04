@@ -1,7 +1,10 @@
 #!/bin/bash
-
-# DoleSe Wonderland FX - Digital Ocean Production Deployment Script
-# This script handles the complete deployment process to Digital Ocean
+# =============================================================================
+# DoleseFX Backend - Quick Deploy to Droplet Console
+# =============================================================================
+# Copy this entire script and paste it into the Digital Ocean Console
+# Console URL: https://cloud.digitalocean.com/droplets/523031329
+# =============================================================================
 
 set -e
 
