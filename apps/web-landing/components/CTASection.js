@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function CTASection() {
   return (
@@ -81,12 +82,12 @@ export default function CTASection() {
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </a>
 
-            <a
+            <Link
               href="/contact?subject=Schedule%20Demo"
               className="group border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
             >
               Schedule a Demo
-            </a>
+            </Link>
           </motion.div>
 
           {/* Trust Signals */}
