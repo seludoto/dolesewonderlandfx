@@ -77,17 +77,23 @@ export default function Community() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://discord.gg/dolesewonderlandfx"
+                href="https://forum.dolesewonderlandfx.me"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center"
               >
-                Join Discord Community
+                Visit Community Forum
                 <ExternalLink className="ml-2 h-5 w-5" />
               </a>
-              <button className="border-2 border-primary-600 text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors">
-                Browse Forums
-              </button>
+              <a
+                href="https://discord.gg/dolesewonderlandfx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-2 border-primary-600 text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors flex items-center justify-center"
+              >
+                Join Discord
+                <ExternalLink className="ml-2 h-5 w-5" />
+              </a>
             </div>
           </div>
 
