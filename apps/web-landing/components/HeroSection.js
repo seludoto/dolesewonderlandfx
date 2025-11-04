@@ -74,23 +74,31 @@ export default function HeroSection() {
               and hands-on practice. Join thousands of successful traders.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 mb-12"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-4 mb-12"
+          >
+            <a
+              href="https://app.dolesewonderlandfx.me/register"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center"
             >
-              <button className="group bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center">
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="group bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 border border-white/20 flex items-center justify-center">
-                <Play className="w-5 h-5 mr-2" />
-                Watch Demo
-              </button>
-            </motion.div>
-
-            {/* Stats */}
+              Start Free Trial
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a
+              href="https://www.youtube.com/watch?v=demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 border border-white/20 flex items-center justify-center"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Watch Demo
+            </a>
+          </motion.div>            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

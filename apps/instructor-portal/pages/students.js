@@ -1,13 +1,5 @@
 import Head from 'next/head'
 import InstructorLayout from '../components/InstructorLayout'
-import {
-  UserGroupIcon,
-  ArrowTrendingUpIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  EnvelopeIcon,
-  PhoneIcon
-} from '@heroicons/react/24/outline'
 
 const students = [
   {
@@ -64,28 +56,28 @@ const stats = [
   {
     name: 'Total Students',
     value: students.length,
-    icon: UserGroupIcon,
+    icon: '👥',
     color: 'text-blue-600',
     bgColor: 'bg-blue-100'
   },
   {
     name: 'Active Students',
     value: students.filter(s => s.status === 'Active').length,
-    icon: ArrowTrendingUpIcon,
+    icon: '📈',
     color: 'text-green-600',
     bgColor: 'bg-green-100'
   },
   {
     name: 'Completion Rate',
     value: `${Math.round((students.reduce((sum, s) => sum + s.coursesCompleted, 0) / students.reduce((sum, s) => sum + s.coursesEnrolled, 0)) * 100)}%`,
-    icon: CheckCircleIcon,
+    icon: '✅',
     color: 'text-purple-600',
     bgColor: 'bg-purple-100'
   },
   {
     name: 'Total Revenue',
     value: `$${students.reduce((sum, s) => sum + s.totalSpent, 0)}`,
-    icon: ArrowTrendingUpIcon,
+    icon: '📈',
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-100'
   }
@@ -116,7 +108,7 @@ export default function StudentsPage() {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <div className={`p-3 rounded-md ${stat.bgColor}`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                      <span className={`text-2xl`}>{stat.icon}</span>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
@@ -187,11 +179,11 @@ export default function StudentsPage() {
                             {student.name}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <EnvelopeIcon className="h-3 w-3 mr-1" />
+                            <span className="text-xs mr-1">✉️</span>
                             {student.email}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
-                            <PhoneIcon className="h-3 w-3 mr-1" />
+                            <span className="text-xs mr-1">📞</span>
                             {student.phone}
                           </div>
                         </div>
@@ -241,7 +233,7 @@ export default function StudentsPage() {
         {/* Empty State */}
         {students.length === 0 && (
           <div className="text-center py-12">
-            <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
+            <span className="text-6xl">👥</span>
             <h3 className="mt-2 text-sm font-medium text-gray-900">No students yet</h3>
             <p className="mt-1 text-sm text-gray-500">
               Students will appear here once they enroll in your courses.

@@ -1,16 +1,6 @@
 import Head from 'next/head'
 import InstructorLayout from '../components/InstructorLayout'
 import Link from 'next/link'
-import {
-  PlusIcon,
-  PencilIcon,
-  EyeIcon,
-  TrashIcon,
-  BookOpenIcon,
-  UserGroupIcon,
-  ClockIcon,
-  StarIcon
-} from '@heroicons/react/24/outline'
 
 const courses = [
   {
@@ -82,7 +72,7 @@ export default function CoursesPage() {
           </div>
           <Link href="/courses/create">
             <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <PlusIcon className="h-5 w-5 mr-2" />
+              <span className="text-lg mr-2">➕</span>
               Create Course
             </button>
           </Link>
@@ -94,7 +84,7 @@ export default function CoursesPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <BookOpenIcon className="h-6 w-6 text-blue-600" />
+                  <span className="text-2xl">📚</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -114,7 +104,7 @@ export default function CoursesPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <UserGroupIcon className="h-6 w-6 text-green-600" />
+                  <span className="text-2xl">👥</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -134,7 +124,7 @@ export default function CoursesPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <StarIcon className="h-6 w-6 text-yellow-600" />
+                  <span className="text-2xl">⭐</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -154,7 +144,7 @@ export default function CoursesPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <ClockIcon className="h-6 w-6 text-purple-600" />
+                  <span className="text-2xl">⏱️</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -196,18 +186,18 @@ export default function CoursesPage() {
 
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
                   <div className="flex items-center">
-                    <UserGroupIcon className="h-4 w-4 mr-1" />
+                    <span className="text-sm mr-1">👥</span>
                     {course.students} students
                   </div>
                   <div className="flex items-center">
-                    <ClockIcon className="h-4 w-4 mr-1" />
+                    <span className="text-sm mr-1">⏱️</span>
                     {course.duration}
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
                   <div className="flex items-center">
-                    <StarIcon className="h-4 w-4 mr-1 text-yellow-400" />
+                    <span className="text-sm mr-1 text-yellow-400">⭐</span>
                     {course.rating > 0 ? course.rating : 'No ratings'}
                   </div>
                   <div className="text-lg font-semibold text-gray-900">
@@ -222,15 +212,15 @@ export default function CoursesPage() {
 
                 <div className="flex space-x-2">
                   <button className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    <EyeIcon className="h-4 w-4 mr-1" />
+                    <span className="text-sm mr-1">👁️</span>
                     Preview
                   </button>
                   <button className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    <PencilIcon className="h-4 w-4 mr-1" />
+                    <span className="text-sm mr-1">✏️</span>
                     Edit
                   </button>
                   <button className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    <TrashIcon className="h-4 w-4" />
+                    <span className="text-sm">🗑️</span>
                   </button>
                 </div>
               </div>
@@ -241,7 +231,7 @@ export default function CoursesPage() {
         {/* Empty State for New Instructors */}
         {courses.length === 0 && (
           <div className="text-center py-12">
-            <BookOpenIcon className="mx-auto h-12 w-12 text-gray-400" />
+            <span className="text-6xl">📚</span>
             <h3 className="mt-2 text-sm font-medium text-gray-900">No courses</h3>
             <p className="mt-1 text-sm text-gray-500">
               Get started by creating your first course.
@@ -249,7 +239,7 @@ export default function CoursesPage() {
             <div className="mt-6">
               <Link href="/courses/create">
                 <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <PlusIcon className="h-5 w-5 mr-2" />
+                  <span className="text-lg mr-2">➕</span>
                   Create Course
                 </button>
               </Link>

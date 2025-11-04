@@ -71,14 +71,22 @@ export default function CTASection() {
             viewport={{ once: true }}
             className="flex flex-col sm:flex-row gap-6 justify-center items-center"
           >
-            <button className="group bg-white text-primary-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center">
+            <a
+              href="https://app.dolesewonderlandfx.me/register"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white text-primary-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center"
+            >
               Start Your Free Trial
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </a>
 
-            <button className="group border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
+            <a
+              href="/contact?subject=Schedule%20Demo"
+              className="group border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+            >
               Schedule a Demo
-            </button>
+            </a>
           </motion.div>
 
           {/* Trust Signals */}

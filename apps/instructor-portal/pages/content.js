@@ -1,15 +1,5 @@
 import Head from 'next/head'
 import InstructorLayout from '../components/InstructorLayout'
-import {
-  VideoCameraIcon,
-  DocumentTextIcon,
-  PhotoIcon,
-  ArrowUpTrayIcon,
-  PlayIcon,
-  PencilIcon,
-  TrashIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline'
 
 const contentItems = [
   {
@@ -58,21 +48,21 @@ const quickActions = [
   {
     name: 'Upload Video',
     description: 'Add video lectures to your courses',
-    icon: VideoCameraIcon,
+    icon: '🎥',
     color: 'text-blue-600',
     bgColor: 'bg-blue-100'
   },
   {
     name: 'Create Quiz',
     description: 'Build interactive assessments',
-    icon: DocumentTextIcon,
+    icon: '📄',
     color: 'text-green-600',
     bgColor: 'bg-green-100'
   },
   {
     name: 'Add Resources',
     description: 'Upload documents and materials',
-    icon: PhotoIcon,
+    icon: '📷',
     color: 'text-purple-600',
     bgColor: 'bg-purple-100'
   }
@@ -102,7 +92,7 @@ export default function ContentPage() {
               <div className="p-6">
                 <div className="flex items-center">
                   <div className={`p-3 rounded-lg ${action.bgColor}`}>
-                    <action.icon className={`h-6 w-6 ${action.color}`} />
+                    <span className="text-2xl">{action.icon}</span>
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-gray-900">{action.name}</h3>
@@ -111,7 +101,7 @@ export default function ContentPage() {
                 </div>
                 <div className="mt-4">
                   <button className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800">
-                    <PlusIcon className="h-4 w-4 mr-2" />
+                    <span className="text-sm mr-2">➕</span>
                     Get Started
                   </button>
                 </div>
@@ -140,7 +130,7 @@ export default function ContentPage() {
                   <option>Documents</option>
                 </select>
                 <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                  <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
+                  <span className="text-sm mr-2">📤</span>
                   Upload
                 </button>
               </div>
@@ -159,9 +149,9 @@ export default function ContentPage() {
                           item.type === 'quiz' ? 'bg-green-100' :
                           'bg-purple-100'
                         }`}>
-                          {item.type === 'video' && <VideoCameraIcon className="h-5 w-5 text-blue-600" />}
-                          {item.type === 'quiz' && <DocumentTextIcon className="h-5 w-5 text-green-600" />}
-                          {item.type === 'document' && <PhotoIcon className="h-5 w-5 text-purple-600" />}
+                          {item.type === 'video' && <span className="text-lg">🎥</span>}
+                          {item.type === 'quiz' && <span className="text-lg">📄</span>}
+                          {item.type === 'document' && <span className="text-lg">📷</span>}
                         </div>
                       </div>
                       <div className="ml-4">
@@ -170,7 +160,7 @@ export default function ContentPage() {
                         <div className="flex items-center text-xs text-gray-400 mt-1">
                           {item.type === 'video' && (
                             <>
-                              <PlayIcon className="h-3 w-3 mr-1" />
+                              <span className="text-xs mr-1">▶️</span>
                               {item.duration} • {item.size}
                             </>
                           )}
@@ -199,13 +189,13 @@ export default function ContentPage() {
                       </span>
                       <div className="flex space-x-2">
                         <button className="text-gray-400 hover:text-gray-600">
-                          <PencilIcon className="h-4 w-4" />
+                          <span className="text-sm">✏️</span>
                         </button>
                         <button className="text-gray-400 hover:text-gray-600">
-                          <PlayIcon className="h-4 w-4" />
+                          <span className="text-sm">▶️</span>
                         </button>
                         <button className="text-gray-400 hover:text-red-600">
-                          <TrashIcon className="h-4 w-4" />
+                          <span className="text-sm">🗑️</span>
                         </button>
                       </div>
                     </div>
@@ -221,14 +211,14 @@ export default function ContentPage() {
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="text-center">
-                <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <span className="text-6xl">📤</span>
                 <h3 className="mt-2 text-sm font-medium text-gray-900">Upload new content</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Drag and drop files here, or click to browse
                 </p>
                 <div className="mt-4">
                   <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
+                    <span className="text-sm mr-2">📤</span>
                     Choose Files
                   </button>
                 </div>
@@ -246,7 +236,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <VideoCameraIcon className="h-6 w-6 text-blue-600" />
+                  <span className="text-2xl">🎥</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -266,7 +256,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <DocumentTextIcon className="h-6 w-6 text-green-600" />
+                  <span className="text-2xl">📄</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -286,7 +276,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <PhotoIcon className="h-6 w-6 text-purple-600" />
+                  <span className="text-2xl">📷</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -306,7 +296,7 @@ export default function ContentPage() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <ArrowUpTrayIcon className="h-6 w-6 text-gray-600" />
+                  <span className="text-2xl">📤</span>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>

@@ -1,0 +1,794 @@
+openapi: 3.0.3
+info:
+  title: DoleSe Wonderland FX Trading Platform API
+  description: Comprehensive API for forex trading education platform with course management, student enrollment, payments, and analytics
+  version: 1.0.0
+  contact:
+    name: DoleSe Wonderland FX
+    email: support@dolesefx.com
+  license:
+    name: ISC
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://api.dolesefx.com/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Courses
+    description: Course management and operations
+  - name: Students
+    description: Student enrollment and progress tracking
+  - name: Payments
+    description: Payment processing with Stripe
+  - name: Analytics
+    description: Platform and course analytics
+  - name: Content
+    description: File uploads and content management
+  - name: Notifications
+    description: Email notifications and preferences
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        role:
+          type: string
+          enum: [student, instructor, admin]
+          example: student
+        avatar:
+          type: string
+          nullable: true
+          example: avatars/user-123.jpg
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Advanced Trading Strategies
+        slug:
+          type: string
+          example: advanced-trading-strategies
+        description:
+          type: string
+          example: Master advanced forex trading techniques
+        category:
+          type: string
+          example: Trading
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: advanced
+        price:
+          type: number
+          format: decimal
+          example: 149.99
+        currency:
+          type: string
+          example: USD
+        status:
+          type: string
+          enum: [draft, published, archived]
+          example: published
+        thumbnailUrl:
+          type: string
+          nullable: true
+        trailerUrl:
+          type: string
+          nullable: true
+        instructorId:
+          type: integer
+          example: 5
+        averageRating:
+          type: number
+          format: float
+          nullable: true
+          example: 4.7
+        totalStudents:
+          type: integer
+          example: 250
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Enrollment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 10
+        courseId:
+          type: integer
+          example: 5
+        progressPercentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 65
+        completed:
+          type: boolean
+          example: false
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        certificateUrl:
+          type: string
+          nullable: true
+        enrolledAt:
+          type: string
+          format: date-time
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 10
+        courseId:
+          type: integer
+          example: 5
+        amount:
+          type: number
+          format: decimal
+          example: 149.99
+        currency:
+          type: string
+          example: USD
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+          example: completed
+        stripePaymentIntentId:
+          type: string
+          example: pi_1234567890
+        paymentMethod:
+          type: string
+          example: card
+        createdAt:
+          type: string
+          format: date-time
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 10
+        courseId:
+          type: integer
+          example: 5
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          example: Excellent course with practical examples
+        createdAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Validation error
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Operation completed successfully
+        data:
+          type: object
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+                  example: SecurePass123
+                role:
+                  type: string
+                  enum: [student, instructor]
+                  default: student
+                  example: student
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User registered successfully
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error or user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticate user and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Retrieve currently authenticated user information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /courses:
+    get:
+      tags:
+        - Courses
+      summary: Get all published courses
+      description: Retrieve list of all published courses with filtering and pagination
+      parameters:
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+        - name: level
+          in: query
+          description: Filter by difficulty level
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+        - name: minPrice
+          in: query
+          description: Minimum price filter
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          description: Maximum price filter
+          schema:
+            type: number
+        - name: search
+          in: query
+          description: Search in title and description
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Courses retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      courses:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Course'
+                      pagination:
+                        type: object
+                        properties:
+                          page:
+                            type: integer
+                            example: 1
+                          limit:
+                            type: integer
+                            example: 10
+                          total:
+                            type: integer
+                            example: 45
+                          pages:
+                            type: integer
+                            example: 5
+
+    post:
+      tags:
+        - Courses
+      summary: Create new course
+      description: Create a new course (instructor/admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - category
+                - price
+              properties:
+                title:
+                  type: string
+                  example: Advanced Trading Strategies
+                description:
+                  type: string
+                  example: Master advanced forex trading techniques
+                category:
+                  type: string
+                  example: Trading
+                level:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  default: beginner
+                price:
+                  type: number
+                  example: 149.99
+                currency:
+                  type: string
+                  default: USD
+      responses:
+        '201':
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      course:
+                        $ref: '#/components/schemas/Course'
+        '403':
+          description: Forbidden - instructor/admin role required
+
+  /courses/{id}:
+    get:
+      tags:
+        - Courses
+      summary: Get course by ID
+      description: Retrieve detailed course information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Course ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Course retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      course:
+                        $ref: '#/components/schemas/Course'
+        '404':
+          description: Course not found
+
+    put:
+      tags:
+        - Courses
+      summary: Update course
+      description: Update course information (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Course ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                level:
+                  type: string
+                price:
+                  type: number
+                status:
+                  type: string
+                  enum: [draft, published, archived]
+      responses:
+        '200':
+          description: Course updated successfully
+        '403':
+          description: Forbidden - not course owner
+        '404':
+          description: Course not found
+
+    delete:
+      tags:
+        - Courses
+      summary: Delete course
+      description: Delete course (owner/admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Course ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Course deleted successfully
+        '403':
+          description: Forbidden
+        '404':
+          description: Course not found
+
+  /students/enroll:
+    post:
+      tags:
+        - Students
+      summary: Enroll in course
+      description: Enroll current user in a course
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - courseId
+              properties:
+                courseId:
+                  type: integer
+                  example: 5
+                paymentId:
+                  type: integer
+                  example: 123
+      responses:
+        '201':
+          description: Enrollment successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      enrollment:
+                        $ref: '#/components/schemas/Enrollment'
+        '400':
+          description: Already enrolled or invalid course
+
+  /students/enrollments:
+    get:
+      tags:
+        - Students
+      summary: Get user enrollments
+      description: Get all enrollments for current user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Enrollments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      enrollments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Enrollment'
+
+  /payments/create-intent:
+    post:
+      tags:
+        - Payments
+      summary: Create payment intent
+      description: Create Stripe payment intent for course purchase
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - courseId
+              properties:
+                courseId:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      clientSecret:
+                        type: string
+                      payment:
+                        $ref: '#/components/schemas/Payment'
+
+  /content/course/{courseId}/thumbnail:
+    post:
+      tags:
+        - Content
+      summary: Upload course thumbnail
+      description: Upload thumbnail image for course (instructor only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Thumbnail uploaded successfully
+
+  /notifications/send:
+    post:
+      tags:
+        - Notifications
+      summary: Send custom email
+      description: Send custom email notification (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - subject
+                - message
+              properties:
+                email:
+                  type: string
+                  format: email
+                subject:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Email sent successfully
+        '403':
+          description: Admin role required

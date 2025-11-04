@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+coverage/
+logs/
+*.log
+.env
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+package-lock.json
+yarn.lock
+*.swp
+*.swo
+*~

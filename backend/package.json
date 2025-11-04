@@ -1,0 +1,72 @@
+{
+  "name": "dolesewonderlandfx-backend",
+  "version": "1.0.0",
+  "description": "Backend API for DoleSe Wonderland FX Trading Platform",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write src/**/*.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:reset": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate",
+    "prepare": "husky install"
+  },
+  "keywords": ["trading", "education", "api", "nodejs", "express"],
+  "author": "DoleSe Wonderland FX",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "aws-sdk": "^2.1692.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.2",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.3.0",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.8.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.10",
+    "pg": "^8.16.3",
+    "redis": "^5.9.0",
+    "sequelize": "^6.37.7",
+    "stripe": "^19.1.0",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^7.2.1",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "lint-staged": "^16.2.6",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "sequelize-cli": "^7.1.0",
+    "supertest": "^7.1.4"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
+}
+}

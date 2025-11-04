@@ -1,27 +1,23 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  HomeIcon,
-  BookOpenIcon,
-  ChartBarIcon,
-  VideoCameraIcon,
-  DocumentTextIcon,
-  CogIcon,
-  Bars3Icon,
-  XMarkIcon,
-  UserGroupIcon,
-  AcademicCapIcon
-} from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Courses', href: '/courses', icon: BookOpenIcon },
-  { name: 'Students', href: '/students', icon: UserGroupIcon },
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Content', href: '/content', icon: VideoCameraIcon },
-  { name: 'Quizzes', href: '/quizzes', icon: DocumentTextIcon },
-  { name: 'Settings', href: '/settings', icon: CogIcon },
+  { name: 'Dashboard', href: '/', icon: '🏠' },
+  { name: 'Courses', href: '/courses', icon: '📚' },
+  { name: 'Students', href: '/students', icon: '👥' },
+  { name: 'Analytics', href: '/analytics', icon: '📊' },
+  { name: 'Content', href: '/content', icon: '🎥' },
+  { name: 'Quizzes', href: '/quizzes', icon: '📄' },
+  { name: 'Settings', href: '/settings', icon: '⚙️' },
+]
+
+const proNavigation = [
+  { name: 'Backtesting Lab', href: '/backtesting', icon: '🖥️', pro: true },
+  { name: 'Technical Analysis', href: '/technical-analysis', icon: '🥧', pro: true },
+  { name: 'API Management', href: '/api-management', icon: '☁️', pro: true },
+  { name: 'Performance Tracking', href: '/performance', icon: '⚡', pro: true },
+  { name: 'Alerts', href: '/alerts', icon: '🔔', pro: true },
 ]
 
 export default function InstructorLayout({ children }) {
@@ -35,13 +31,13 @@ export default function InstructorLayout({ children }) {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 flex-shrink-0 items-center justify-between px-4 border-b border-gray-200">
-            <AcademicCapIcon className="h-8 w-8 text-blue-600" />
+            <span className="text-2xl">🎓</span>
             <button
               type="button"
               className="text-gray-400 hover:text-gray-500"
               onClick={() => setSidebarOpen(false)}
             >
-              <XMarkIcon className="h-6 w-6" />
+              <span className="text-lg">✕</span>
             </button>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-1">
@@ -58,11 +54,41 @@ export default function InstructorLayout({ children }) {
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                  <span className="mr-2 text-sm">{item.icon}</span>
                   {item.name}
                 </Link>
               )
             })}
+            
+            {/* Pro Trader Features */}
+            <div className="pt-4">
+              <div className="flex items-center px-2 py-2">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Pro Trader
+                </span>
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                  PRO
+                </span>
+              </div>
+              {proNavigation.map((item) => {
+                const isActive = router.pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isActive
+                        ? 'bg-blue-100 text-blue-900'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <span className="mr-2 text-sm">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
           </nav>
         </div>
       </div>
@@ -71,7 +97,7 @@ export default function InstructorLayout({ children }) {
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 flex-shrink-0 items-center px-4 border-b border-gray-200">
-            <AcademicCapIcon className="h-8 w-8 text-blue-600" />
+            <span className="text-2xl">🎓</span>
             <span className="ml-2 text-xl font-bold text-gray-900">Instructor</span>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-1">
@@ -87,11 +113,40 @@ export default function InstructorLayout({ children }) {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                  <span className="mr-2 text-sm">{item.icon}</span>
                   {item.name}
                 </Link>
               )
             })}
+            
+            {/* Pro Trader Features */}
+            <div className="pt-4">
+              <div className="flex items-center px-2 py-2">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Pro Trader
+                </span>
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                  PRO
+                </span>
+              </div>
+              {proNavigation.map((item) => {
+                const isActive = router.pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isActive
+                        ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-900 border border-blue-200'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className="mr-2 text-sm">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
           </nav>
         </div>
       </div>
@@ -105,7 +160,7 @@ export default function InstructorLayout({ children }) {
             className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <Bars3Icon className="h-6 w-6" />
+            <span className="text-lg">☰</span>
           </button>
           <div className="flex flex-1 justify-between px-4">
             <div className="flex flex-1">
